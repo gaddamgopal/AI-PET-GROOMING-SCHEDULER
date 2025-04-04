@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LPU - AI Pet Grooming Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #7E57C2;
+            --secondary: #26A69A;
+            --accent: #FFA726;
+            --light: #F5F5F5;
+            --dark: #263238;
+            --success: #66BB6A;
+            --warning: #FF7043;
+            --error: #EF5350;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f9f5ff;
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, #9575CD 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+
+        }
+        h1{
+            font-size: 50px;
+            color: black;
+        }
+        
+        .logo {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            font-size: 1.8rem;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+        }
+        
+        .container {
+            display: flex;
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .sidebar {
+            width: 350px;
+            background-color: white;
+            border-right: 1px solid #eee;
+            padding: 2rem;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-container {
+            flex: 1;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--secondary) 0%, #4DB6AC 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chat-header i {
+            font-size: 1.5rem;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 1rem 1.5rem;
+            border-radius: 18px;
+            line-height: 1.5;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .bot-message {
+            align-self: flex-start;
+            background-color: #EDE7F6;
+            border-bottom-left-radius: 4px;
+            color: var(--dark);
+        }
+        
+        .user-message {
+            align-self: flex-end;
+            background-color: var(--primary);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .option-btn {
+            padding: 0.8rem 1.2rem;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+        
+        .option-btn:hover {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .option-btn.selected {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .calendar-container {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+        }
+        
+        .calendar-header {
+            text-align: center;
+            font-weight: 600;
+            padding: 8px;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+        
+        .calendar-day {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+        
+        .calendar-day:hover {
+            background-color: #EDE7F6;
+        }
+        
+        .calendar-day.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .calendar-day.disabled {
+            color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .time-slots-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .time-slot {
+            padding: 0.8rem;
+            text-align: center;
+            background-color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid #ddd;
+            font-size: 0.9rem;
+        }
+        
+        .time-slot:hover {
+            background-color: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+        
+        .time-slot.booked {
+            background-color: #EF9A9A;
+            color: white;
+            cursor: not-allowed;
+        }
+        
+        .time-slot.selected {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 1rem;
+            border-top: 1px solid #eee;
+            background-color: #fafafa;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 0.8rem 1.2rem;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            outline: none;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+        
+        .chat-input input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(126, 87, 194, 0.2);
+        }
+        
+        .send-btn {
+            margin-left: 10px;
+            padding: 0 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .send-btn:hover {
+            background-color: #6a4c93;
+        }
+        
+        .pet-card {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .pet-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .pet-card.selected {
+            border: 2px solid var(--primary);
+            background-color: #EDE7F6;
+        }
+        
+        .pet-card img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 1rem;
+            border: 3px solid #eee;
+        }
+        
+        .pet-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .pet-info p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .sidebar-title {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sidebar-title i {
+            font-size: 1.2rem;
+        }
+        
+        .appointment-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .appointment-card h3 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .appointment-card h3 i {
+            color: var(--secondary);
+        }
+        
+        .appointment-card p {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+        
+        .appointment-card .status {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        
+        .status.completed {
+            background-color: #C8E6C9;
+            color: #2E7D32;
+        }
+        
+        .status.upcoming {
+            background-color: #B3E5FC;
+            color: #0277BD;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background-color: #eee;
+            border-radius: 2px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0;
+            transition: width 0.5s ease;
+        }
+        
+        .confirmation-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .confirmation-screen i {
+            font-size: 4rem;
+            color: var(--success);
+            margin-bottom: 1.5rem;
+        }
+        
+        .confirmation-screen h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .confirmation-screen p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .confirmation-screen .btn {
+            padding: 0.8rem 2rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+        
+        .confirmation-screen .btn:hover {
+            background-color: #6a4c93;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        @media (max-width: 992px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #eee;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <i class="fas fa-paw"></i>
+            <img src="https://th.bing.com/th/id/OIP.opbiFDS4nTx0cMmFktFDqgAAAA?w=212&h=108&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt ="User">
+         
+           
+        </div>
+        <div class="user-profile">
+            <h1><marquee> PET GROMMING SECHUDULER</marquee></h1>
+            
+            <aside class="registration-panel" id="registrationPanel">
+                <h3><i class="fas fa-id-card"></i> Registration Numbers</h3>
+                <ul class="registration-list">
+                    <li class="registration-item">
+                        <i class="fas fa-user"></i> 12323015(John victor)
+                    </li>
+                    <li class="registration-item">
+                        <i class="fas fa-user"></i> 12318703(Gopal Gaddam)
+                    </li>
+                    <li class="registration-item">
+                        <i class="fas fa-user"></i> 12311822(prabhath)
+                    </li>
+                </ul>
+            </aside>
+            </div>
+          
+            <img src="https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_640.png" alt="User" height="200px">
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-title">
+                <i class="fas fa-clock"></i>
+                Upcoming Appointments
+            </div>
+            
+            <div class="appointment-card">
+                <h3><i class="fas fa-dog"></i> Max - Full Grooming</h3>
+                <p><i class="far fa-calendar-alt"></i> June 25, 2023</p>
+                <p><i class="far fa-clock"></i> 2:00 PM - 3:30 PM</p>
+                <span class="status upcoming">Upcoming</span>
+            </div>
+            
+            <div class="sidebar-title" style="margin-top: 2rem;">
+                <i class="fas fa-history"></i>
+                Past Appointments
+            </div>
+            
+            <div class="appointment-card">
+                <h3><i class="fas fa-dog"></i> Max - Bath & Brush</h3>
+                <p><i class="far fa-calendar-alt"></i> May 15, 2023</p>
+                <p><i class="far fa-clock"></i> 10:00 AM - 11:00 AM</p>
+                <span class="status completed">Completed</span>
+            </div>
+            
+            <div class="appointment-card">
+                <h3><i class="fas fa-cat"></i> Luna - Haircut</h3>
+                <p><i class="far fa-calendar-alt"></i> April 28, 2023</p>
+                <p><i class="far fa-clock"></i> 2:30 PM - 3:30 PM</p>
+                <span class="status completed">Completed</span>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <i class="fas fa-robot"></i>
+                    <h2>AI Grooming Assistant</h2>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress" id="progress-bar"></div>
+                </div>
+                
+                <div class="chat-messages" id="chat-messages">
+                    <!-- Messages will be added here by JavaScript -->
+                </div>
+                
+                <div class="confirmation-screen" id="confirmation-screen">
+                    <i class="fas fa-check-circle"></i>
+                    <h2>Appointment Confirmed!</h2>
+                    <p>Your grooming appointment for <strong>Max</strong> (Full Grooming) has been scheduled for <strong>June 25, 2023 at 2:00 PM</strong>.</p>
+                    <p>We've sent a confirmation to your email.</p>
+                    <button class="btn" id="new-appointment-btn">Schedule Another</button>
+                </div>
+                
+                <div class="chat-input">
+                    <input type="text" id="user-input" placeholder="Type your message here..." disabled>
+                    <button class="send-btn" id="send-btn" disabled>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</main>
+
+
+    
+    <script>
+        // DOM Elements
+        const chatMessages = document.getElementById('chat-messages');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const confirmationScreen = document.getElementById('confirmation-screen');
+        const newAppointmentBtn = document.getElementById('new-appointment-btn');
+        const progressBar = document.getElementById('progress-bar');
+        
+        // State
+        let currentStep = 0;
+        let selectedPet = null;
+        let selectedService = null;
+        let selectedDate = null;
+        let selectedTime = null;
+        
+        // Pets data
+        const pets = [
+            {
+                id: 1,
+                name: "Max",
+                type: "Golden Retriever",
+                age: "3 years",
+                lastGroomed: "May 15, 2023",
+                image: "https://images.unsplash.com/photo-1586671267731-da2cf3ceeb80?w=200"
+            },
+            {
+                id: 2,
+                name: "Luna",
+                type: "Persian Cat",
+                age: "2 years",
+                lastGroomed: "April 28, 2023",
+                image: "https://images.unsplash.com/photo-1517849845537-4d257902454a?w=200"
+            },
+            {
+                id: 3,
+                name: "Charlie",
+                type: "Poodle",
+                age: "5 years",
+                lastGroomed: "April 10, 2023",
+                image: "https://images.unsplash.com/photo-1594149929911-78975a43d4f5?w=200"
+            }
+        ];
+        
+        // Services data
+        const services = [
+            { id: 1, name: "Full Grooming", description: "Bath, haircut, nail trim, ear cleaning", duration: 90, price: "$75" },
+            { id: 2, name: "Bath & Brush", description: "Bath, blow dry, and brushing", duration: 60, price: "$45" },
+            { id: 3, name: "Haircut", description: "Breed-specific haircut", duration: 60, price: "$55" },
+            { id: 4, name: "Nail Trim", description: "Nail trimming and filing", duration: 15, price: "$15" },
+            { id: 5, name: "Teeth Cleaning", description: "Professional teeth brushing", duration: 20, price: "$25" },
+            { id: 6, name: "Ear Cleaning", description: "Ear inspection and cleaning", duration: 15, price: "$15" }
+        ];
+        
+        // Available dates (next 2 weeks)
+        const availableDates = [];
+        const today = new Date();
+        for (let i = 1; i <= 14; i++) {
+            const date = new Date();
+            date.setDate(today.getDate() + i);
+            availableDates.push(date);
+        }
+        
+        // Available time slots
+        const timeSlots = [
+            "9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", 
+            "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM"
+        ];
+        
+        // Booked time slots (simulated)
+        const bookedSlots = ["June 25, 2023 11:00 AM", "June 26, 2023 2:00 PM"];
+        
+        // Initialize chat
+        function initChat() {
+            currentStep = 0;
+            selectedPet = null;
+            selectedService = null;
+            selectedDate = null;
+            selectedTime = null;
+            
+            chatMessages.innerHTML = '';
+            confirmationScreen.style.display = 'none';
+            userInput.disabled = false;
+            sendBtn.disabled = false;
+            
+            // Show welcome message
+            addBotMessage("Hello! I'm your AI Pet Grooming Assistant. Let's schedule an appointment for your pet!");
+            
+            // Start conversation
+            setTimeout(() => askAboutPet(), 1000);
+        }
+        
+        // Add bot message to chat
+        function addBotMessage(text, options = null) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot-message';
+            messageDiv.innerHTML = text;
+            
+            chatMessages.appendChild(messageDiv);
+            
+            if (options) {
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'options-container';
+                
+                options.forEach(option => {
+                    const optionBtn = document.createElement('button');
+                    optionBtn.className = 'option-btn';
+                    optionBtn.textContent = option.text;
+                    optionBtn.onclick = option.action;
+                    optionsDiv.appendChild(optionBtn);
+                });
+                
+                chatMessages.appendChild(optionsDiv);
+            }
+            
+            scrollToBottom();
+        }
+        
+        // Add user message to chat
+        function addUserMessage(text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message user-message';
+            messageDiv.textContent = text;
+            
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+        
+        // Scroll to bottom of chat
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // Update progress bar
+        function updateProgress(step) {
+            const totalSteps = 5; // pet, service, date, time, confirm
+            const progress = (step / totalSteps) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+        
+        // Ask about pet
+        function askAboutPet() {
+            currentStep = 1;
+            updateProgress(1);
+            
+            let message = "Which pet are we scheduling for today?";
+            
+            addBotMessage(message, pets.map(pet => ({
+                text: pet.name,
+                action: () => selectPet(pet)
+            })));
+        }
+        
+        // Select pet
+        function selectPet(pet) {
+            selectedPet = pet;
+            addUserMessage(pet.name);
+            
+            setTimeout(() => {
+                addBotMessage(`Great choice! ${pet.name} is a beautiful ${pet.type}.`);
+                askAboutService();
+            }, 500);
+        }
+        
+        // Ask about service
+        function askAboutService() {
+            currentStep = 2;
+            updateProgress(2);
+            
+            setTimeout(() => {
+                addBotMessage("What service would you like for " + selectedPet.name + "?", 
+                    services.map(service => ({
+                        text: service.name,
+                        action: () => selectService(service)
+                    }))
+                );
+            }, 800);
+        }
+        
+        // Select service
+        function selectService(service) {
+            selectedService = service;
+            addUserMessage(service.name);
+            
+            setTimeout(() => {
+                addBotMessage(`The ${service.name} includes ${service.description} and takes about ${service.duration} minutes.`);
+                
+                // AI recommendation based on pet type and last grooming
+                if (selectedPet.type.includes("Retriever") && service.name === "Full Grooming") {
+                    setTimeout(() => {
+                        addBotMessage(`<i class="fas fa-lightbulb"></i> <strong>AI Tip:</strong> For ${selectedPet.name}'s breed, we recommend a Full Grooming every 6-8 weeks to maintain their coat health.`);
+                    }, 800);
+                }
+                
+                askAboutDate();
+            }, 800);
+        }
+        
+        // Ask about date
+        function askAboutDate() {
+            currentStep = 3;
+            updateProgress(3);
+            
+            setTimeout(() => {
+                // Create calendar header
+                let calendarHtml = '<div class="calendar-container">';
+                
+                // Add day headers
+                ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => {
+                    calendarHtml += `<div class="calendar-header">${day}</div>`;
+                });
+                
+                // Get first date to display
+                const firstDate = availableDates[0];
+                const firstDay = firstDate.getDay(); // Day of week (0-6)
+                
+                // Add empty cells for days before the first date
+                for (let i = 0; i < firstDay; i++) {
+                    calendarHtml += '<div class="calendar-day disabled"></div>';
+                }
+                
+                // Add available dates
+                availableDates.forEach(date => {
+                    const day = date.getDate();
+                    const month = date.getMonth() + 1;
+                    const year = date.getFullYear();
+                    const dateStr = `${month}/${day}/${year}`;
+                    
+                    calendarHtml += `
+                        <div class="calendar-day" onclick="selectDate('${dateStr}')">
+                            ${day}
+                        </div>
+                    `;
+                });
+                
+                calendarHtml += '</div>';
+                
+                addBotMessage("When would you like to schedule the appointment? Here are available dates:", [
+                    { text: "Show more dates", action: () => showMoreDates() }
+                ]);
+                
+                // Add calendar to chat
+                const calendarDiv = document.createElement('div');
+                calendarDiv.innerHTML = calendarHtml;
+                chatMessages.appendChild(calendarDiv);
+                
+                scrollToBottom();
+            }, 800);
+        }
+        
+        // Select date
+        function selectDate(dateStr) {
+            const [month, day, year] = dateStr.split('/');
+            const date = new Date(year, month - 1, day);
+            selectedDate = date;
+            
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = date.toLocaleDateString('en-US', options);
+            
+            addUserMessage(formattedDate);
+            
+            setTimeout(() => {
+                askAboutTime();
+            }, 500);
+        }
+        
+        // Ask about time
+        function askAboutTime() {
+            currentStep = 4;
+            updateProgress(4);
+            
+            setTimeout(() => {
+                // Create time slots
+                let timeSlotsHtml = '<div class="time-slots-container">';
+                
+                timeSlots.forEach(time => {
+                    const dateStr = selectedDate.toLocaleDateString('en-US');
+                    const isBooked = bookedSlots.includes(`${dateStr} ${time}`);
+                    
+                    timeSlotsHtml += `
+                        <div class="time-slot ${isBooked ? 'booked' : ''}" 
+                             onclick="${isBooked ? '' : `selectTime('${time}')`}">
+                            ${time}
+                        </div>
+                    `;
+                });
+                
+                timeSlotsHtml += '</div>';
+                
+                addBotMessage("What time works best for you?");
+                
+                // Add time slots to chat
+                const timeSlotsDiv = document.createElement('div');
+                timeSlotsDiv.innerHTML = timeSlotsHtml;
+                chatMessages.appendChild(timeSlotsDiv);
+                
+                scrollToBottom();
+            }, 800);
+        }
+        
+        // Select time
+        function selectTime(time) {
+            selectedTime = time;
+            addUserMessage(time);
+            
+            setTimeout(() => {
+                confirmAppointment();
+            }, 500);
+        }
+        
+        // Confirm appointment
+        function confirmAppointment() {
+            currentStep = 5;
+            updateProgress(5);
+            
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = selectedDate.toLocaleDateString('en-US', options);
+            
+            setTimeout(() => {
+                addBotMessage(`Please confirm your appointment:<br><br>
+                    <strong>Pet:</strong> ${selectedPet.name} (${selectedPet.type})<br>
+                    <strong>Service:</strong> ${selectedService.name}<br>
+                    <strong>Date:</strong> ${formattedDate}<br>
+                    <strong>Time:</strong> ${selectedTime}<br>
+                    <strong>Duration:</strong> ${selectedService.duration} minutes<br>
+                    <strong>Price:</strong> ${selectedService.price}`, [
+                    { text: "Confirm", action: () => completeBooking() },
+                    { text: "Change something", action: () => initChat() }
+                ]);
+            }, 800);
+        }
+        
+        // Complete booking
+        function completeBooking() {
+            addUserMessage("Confirm");
+            
+            setTimeout(() => {
+                // Hide chat interface
+                userInput.disabled = true;
+                sendBtn.disabled = true;
+                
+                // Show confirmation screen
+                confirmationScreen.style.display = 'flex';
+                scrollToBottom();
+            }, 500);
+        }
+        
+        // Initialize the chat when page loads
+        window.onload = function() {
+            initChat();
+            
+            // Setup event listeners
+            sendBtn.addEventListener('click', function() {
+                const message = userInput.value.trim();
+                if (message) {
+                    addUserMessage(message);
+                    userInput.value = '';
+                    
+                    // Bot response to free text input
+                    setTimeout(() => {
+                        addBotMessage("I'm an AI assistant designed to help you schedule grooming appointments. Please use the buttons to select options.");
+                    }, 800);
+                }
+            });
+            
+            userInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendBtn.click();
+                }
+            });
+            
+            newAppointmentBtn.addEventListener('click', initChat);
+        };
+        
+        // Make functions available globally for HTML onclick
+        window.selectPet = selectPet;
+        window.selectService = selectService;
+        window.selectDate = selectDate;
+        window.selectTime = selectTime;
+    </script>
+</body>
+</html>
